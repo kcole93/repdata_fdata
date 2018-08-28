@@ -26,6 +26,19 @@ Using ggplot2, a histogram is generated showing how often a certain number of st
 
 ``` r
 library(ggplot2)
+```
+
+    ## Find out what's changed in ggplot2 at
+    ## http://github.com/tidyverse/ggplot2/releases.
+
+    ## 
+    ## Attaching package: 'ggplot2'
+
+    ## The following object is masked _by_ '.GlobalEnv':
+    ## 
+    ##     diamonds
+
+``` r
 g <- ggplot(step_totals, aes(steps))
 g + geom_histogram(stat = "bin", bins = 5) +
   ggtitle("Steps Recorded per Day") +
@@ -33,7 +46,7 @@ g + geom_histogram(stat = "bin", bins = 5) +
   ylab("Frequency")
 ```
 
-![](fitness_data_files/figure-markdown_github/unnamed-chunk-3-1.png)
+![](PA1_template_files/figure-markdown_github/unnamed-chunk-3-1.png)
 
 Calculating Mean and Median Step Counts
 ---------------------------------------
@@ -61,7 +74,7 @@ g2 + geom_line() +
   ylab("Steps")
 ```
 
-![](fitness_data_files/figure-markdown_github/unnamed-chunk-5-1.png)
+![](PA1_template_files/figure-markdown_github/unnamed-chunk-5-1.png)
 
 Calculating the Typically Most Active 5-Minute Interval
 -------------------------------------------------------
@@ -112,7 +125,7 @@ g3 + geom_histogram(stat = "bin", bins = 5) +
   ylab("Frequency")
 ```
 
-![](fitness_data_files/figure-markdown_github/unnamed-chunk-9-1.png)
+![](PA1_template_files/figure-markdown_github/unnamed-chunk-9-1.png)
 
 Activty Levels: Weekdays vs. Weekends
 -------------------------------------
@@ -150,6 +163,6 @@ g4 <- ggplot(data = daily_avg, aes(interval, steps)) +
 plot(g4)
 ```
 
-![](fitness_data_files/figure-markdown_github/unnamed-chunk-10-1.png)
+![](PA1_template_files/figure-markdown_github/unnamed-chunk-10-1.png)
 
 The plot clearly shows that the subject tends to become active earlier on weekdays than weekends. Additionally, on average there is less activity in the latter intervals during the weekdays in comparison to the weekends.
