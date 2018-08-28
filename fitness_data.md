@@ -1,35 +1,30 @@
----
-title: "Fitness Monitor Data - Reproducible Research"
-author: "Kevin Cole"
-date: "August 26, 2018"
-output: github_document
----
+Fitness Monitor Data - Reproducible Research
+================
+Kevin Cole
+August 26, 2018
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-options(digits = 2)
-```
+Reading in the data
+-------------------
 
-## Reading in the data
 The following code chunk reads the .CSV file into an object in R. Then, the column "date" is converted from a character string to a date object to simplify our analysis.
 
-```{r}
+``` r
 fit_data <- read.csv("activity.csv",  stringsAsFactors = FALSE)
 fit_data$date <- as.Date(fit_data$date, "%Y-%m-%d")
-
 ```
 
 Aggregate number of steps per day:
 
-```{r}
+``` r
 step_totals <- aggregate(steps ~ date, data = fit_data, sum)
 ```
 
-## Plotting Histogram of Steps/Day
+Plotting Histogram of Steps/Day
+-------------------------------
 
 Using ggplot2, a histogram is generated showing how often a certain number of steps was taken per day.
 
-```{r}
+``` r
 library(ggplot2)
 g <- ggplot(step_totals, aes(steps))
 g + geom_histogram(stat = "bin", bins = 5) +
@@ -38,24 +33,26 @@ g + geom_histogram(stat = "bin", bins = 5) +
   ylab("Frequency")
 ```
 
-## Calculating Mean and Median Step Counts
+![](fitness_data_files/figure-markdown_github/unnamed-chunk-3-1.png)
+
+Calculating Mean and Median Step Counts
+---------------------------------------
 
 The following code will calculate the mean number of steps per day, as well as the median number of steps per day.
 
-```{r}
-
+``` r
 mean_steps <- as.integer(mean(step_totals$steps))
 median_steps <- as.integer(median(step_totals$steps))
 ```
 
-The mean number of steps per day was **`r mean_steps`**. The median number of steps per day was **`r median_steps`**.
+The mean number of steps per day was **10766**. The median number of steps per day was **10765**.
 
-## Plotting Average Number of Steps as a Time Series
+Plotting Average Number of Steps as a Time Series
+-------------------------------------------------
 
 The following code calculates the average number of steps per 5-minute interval across all of the days recorded in the data, then plots this average as a time series.
 
-```{r}
-
+``` r
 interval_avg <- aggregate(steps ~ interval, data = fit_data, mean)
 g2 <- ggplot(interval_avg, aes(interval, steps))
 g2 + geom_line() +
@@ -64,28 +61,33 @@ g2 + geom_line() +
   ylab("Steps")
 ```
 
-## Calculating the Typically Most Active 5-Minute Interval
+![](fitness_data_files/figure-markdown_github/unnamed-chunk-5-1.png)
+
+Calculating the Typically Most Active 5-Minute Interval
+-------------------------------------------------------
 
 By finding which 5-minute interval contains on average the highest step count, we can infer during which period of the day the subject is most active.
 
-```{r}
+``` r
 max_activity <- interval_avg$interval[which.max(interval_avg$steps)]
 ```
 
-On average, the highest number of steps was recorded during interval number **`r max_activity`**.
+On average, the highest number of steps was recorded during interval number **835**.
 
-## Imputing Missing Values
+Imputing Missing Values
+-----------------------
 
 The following code calculates the number of missing values in the dataset.
-```{r}
+
+``` r
 missing_data <- sum(is.na(fit_data))
 ```
 
-There are `r missing_data` missing observations in the dataset.
+There are 2304 missing observations in the dataset.
 
 In order to fill in this missing data, we can calculate the average number of steps in each 5-minute interval and impute the respective average into each missing observation.
 
-```{r}
+``` r
 ## Create a new datatable with the original data incl. missing observations
 completed_data <- fit_data
 ## Using a for loop, check each row for NAs in steps column.
@@ -101,8 +103,7 @@ for (i in 1:nrow(completed_data)) {
 
 The following code snippet plots a histogram of the total number of steps per day.
 
-```{r}
-
+``` r
 new_dailysteps <- aggregate(steps ~ date, data = completed_data, sum)
 g3 <- ggplot(new_dailysteps, aes(steps))
 g3 + geom_histogram(stat = "bin", bins = 5) +
@@ -111,10 +112,29 @@ g3 + geom_histogram(stat = "bin", bins = 5) +
   ylab("Frequency")
 ```
 
-## Activty Levels: Weekdays vs. Weekends
+![](fitness_data_files/figure-markdown_github/unnamed-chunk-9-1.png)
 
-```{r}
+Activty Levels: Weekdays vs. Weekends
+-------------------------------------
+
+``` r
 library(dplyr, quietly = TRUE)
+```
+
+    ## Warning: package 'dplyr' was built under R version 3.3.3
+
+    ## 
+    ## Attaching package: 'dplyr'
+
+    ## The following objects are masked from 'package:stats':
+    ## 
+    ##     filter, lag
+
+    ## The following objects are masked from 'package:base':
+    ## 
+    ##     intersect, setdiff, setequal, union
+
+``` r
 completed_data$day <- weekdays(completed_data$date)
 completed_data$daytype <- "weekday"
 completed_data$daytype[completed_data$day %in% c("Saturday", "Sunday")] <- "weekend"
@@ -128,6 +148,8 @@ g4 <- ggplot(data = daily_avg, aes(interval, steps)) +
              ggtitle("Average Steps Recorded, Weekdays vs. Weekends") +
              facet_grid(daytype ~ .)
 plot(g4)
-````
+```
+
+![](fitness_data_files/figure-markdown_github/unnamed-chunk-10-1.png)
 
 The plot clearly shows that the subject tends to become active earlier on weekdays than weekends. Additionally, on average there is less activity in the latter intervals during the weekdays in comparison to the weekends.
